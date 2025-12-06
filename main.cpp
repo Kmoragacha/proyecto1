@@ -160,7 +160,7 @@ void consultarPagos() {
 
     if (indice == -1) {
         gotoxy(10, 8); setColor(4); cout << "Pago no encontrado."; setColor(7);
-        cout << "\n\nPulse cualquier tecla para continuar . . .";
+      cout << "\n\nPulse cualquier tecla para continuar . . .";
         getch();
         return;
     }
@@ -315,6 +315,136 @@ void subMenuReportes() {
     } while(opcion != 5);
 }
 
+
+
+void modificarPago() {
+    system("cls");
+    setColor(11);
+    gotoxy(30, 2); cout << "Sistema Pago de Servicios Publicos";
+    gotoxy(30, 3); cout << "Tienda La Favorita - Modificar Pagos";
+    setColor(7);
+
+    int num;
+    gotoxy(10, 5); cout << "Numero de Pago a modificar: ";
+    cin >> num;
+
+    int indice = -1;
+    for (int i = 0; i < contador; i++) {
+        if (numeroPago[i] == num) { indice = i; break; }
+    }
+
+    if (indice == -1) {
+        gotoxy(10, 8); setColor(4); cout << "Pago no encontrado."; setColor(7);
+        cout << "\n\nPulse cualquier tecla para continuar . . ."; getch();
+        return;
+    }
+
+    char continuar = 'S';
+    while (continuar == 'S') {
+        system("cls");
+        setColor(11);
+        gotoxy(30, 2); cout << "Modificar Pago #" << numeroPago[indice];
+        setColor(7);
+
+        gotoxy(10, 5); cout << "A-Fecha: " << fecha[indice];
+        gotoxy(40, 5); cout << "B-Hora: " << hora[indice];
+        gotoxy(10, 6); cout << "C-Cedula: " << cedula[indice];
+        gotoxy(40, 6); cout << "D-Nombre: " << nombre[indice];
+        gotoxy(10, 7); cout << "E-Apellido1: " << apellido1[indice];
+        gotoxy(40, 7); cout << "F-Apellido2: " << apellido2[indice];
+        gotoxy(10, 8); cout << "G-Tipo Servicio: " << tipoServicio[indice];
+        gotoxy(40, 8); cout << "H-Numero Factura: " << numeroFactura[indice];
+        gotoxy(10, 9); cout << "I-Monto Pagar: " << montoPagar[indice];
+        gotoxy(40, 9); cout << "J-Paga con: " << montoCliente[indice];
+
+        gotoxy(10, 11); cout << "Seleccione opcion a modificar: ";
+        char opcion; cin >> opcion; opcion = toupper(opcion);
+
+        switch(opcion) {
+            case 'A': cout << "Nueva Fecha: "; cin >> fecha[indice]; break;
+            case 'B': cout << "Nueva Hora: "; cin >> hora[indice]; break;
+            case 'C': cout << "Nueva Cedula: "; cin >> cedula[indice]; break;
+            case 'D': cout << "Nuevo Nombre: "; cin >> nombre[indice]; break;
+            case 'E': cout << "Nuevo Apellido1: "; cin >> apellido1[indice]; break;
+            case 'F': cout << "Nuevo Apellido2: "; cin >> apellido2[indice]; break;
+            case 'G': tipoServicio[indice] = leerTipoServicio(); break;
+            case 'H': cout << "Nuevo Numero Factura: "; cin >> numeroFactura[indice]; break;
+            case 'I': cout << "Nuevo Monto Pagar: "; cin >> montoPagar[indice]; break;
+            case 'J': cout << "Nuevo Monto Cliente: "; cin >> montoCliente[indice]; break;
+            default: cout << "Opcion invalida."; break;
+        }
+
+        // Recalcular si cambian montos o tipo
+        montoComision[indice] = calcularComision(tipoServicio[indice], montoPagar[indice]);
+        montoDeducido[indice] = montoPagar[indice] - montoComision[indice];
+        vuelto[indice] = montoCliente[indice] - montoPagar[indice];
+
+        gotoxy(10, 14); cout << "Registro actualizado!";
+        gotoxy(10, 16); cout << "Desea modificar otro campo? (S/N): ";
+        cin >> continuar; continuar = toupper(continuar);
+    }
+    cout << "\n\nPulse cualquier tecla para continuar . . ."; getch();
+}
+
+
+void eliminarPago() {
+    system("cls");
+    setColor(11);
+    gotoxy(30, 2); cout << "Sistema Pago de Servicios Publicos";
+    gotoxy(30, 3); cout << "Tienda La Favorita - Eliminar Pagos";
+    setColor(7);
+
+    int num;
+    gotoxy(10, 5); cout << "Numero de Pago a eliminar: ";
+    cin >> num;
+
+    int indice = -1;
+    for (int i = 0; i < contador; i++) {
+        if (numeroPago[i] == num) { indice = i; break; }
+    }
+
+    if (indice == -1) {
+        gotoxy(10, 8); setColor(4); cout << "Pago no encontrado."; setColor(7);
+        cout << "\n\nPulse cualquier tecla para continuar . . ."; getch();
+        return;
+    }
+
+    // Mostrar datos antes de eliminar
+    gotoxy(10, 8); cout << "Pago encontrado:";
+    gotoxy(10,10); cout << "Cliente: " << nombre[indice] << " " << apellido1[indice];
+    gotoxy(10,11); cout << "Monto: " << montoPagar[indice];
+    gotoxy(10,13); cout << "Confirma eliminar? (S/N): ";
+    char confirmar; cin >> confirmar; confirmar = toupper(confirmar);
+
+    if (confirmar == 'S') {
+        for (int i = indice; i < contador - 1; i++) {
+            numeroPago[i] = numeroPago[i+1];
+            fecha[i] = fecha[i+1];
+            hora[i] = hora[i+1];
+            cedula[i] = cedula[i+1];
+            nombre[i] = nombre[i+1];
+            apellido1[i] = apellido1[i+1];
+            apellido2[i] = apellido2[i+1];
+            numeroCaja[i] = numeroCaja[i+1];
+            tipoServicio[i] = tipoServicio[i+1];
+            numeroFactura[i] = numeroFactura[i+1];
+            montoPagar[i] = montoPagar[i+1];
+            montoComision[i] = montoComision[i+1];
+            montoDeducido[i] = montoDeducido[i+1];
+            montoCliente[i] = montoCliente[i+1];
+            vuelto[i] = vuelto[i+1];
+        }
+        contador--;
+        gotoxy(10,15); setColor(10); cout << "Pago eliminado correctamente."; setColor(7);
+    } else {
+        gotoxy(10,15); cout << "Operacion cancelada.";
+    }
+
+    cout << "\n\nPulse cualquier tecla para continuar . . ."; getch();
+}
+
+
+
 // MAIN
 int main() {
     srand(time(0));
@@ -327,15 +457,19 @@ int main() {
         gotoxy(35, 7); cout << "1. Inicializar vectores";
         gotoxy(35, 8); cout << "2. Realizar pagos";
         gotoxy(35, 9); cout << "3. Consultar pagos";
-        gotoxy(35,10); cout << "6. Submenu reportes";
-        gotoxy(35,11); cout << "7. Salir";
-        gotoxy(35,13); setColor(14); cout << "Seleccione una opcion: "; setColor(7);
+        gotoxy(35,10); cout << "4. Modificar pagos";
+		gotoxy(35,11); cout << "5. Eliminar pagos";
+        gotoxy(35,12); cout << "6. Submenu reportes";
+        gotoxy(35,13); cout << "7. Salir";
+        gotoxy(35,14); setColor(15); cout << "Seleccione una opcion: "; setColor(7);
         cin >> opcion;
         system("cls");
         switch(opcion) {
             case 1: inicializarVectores(); break;
             case 2: realizarPagos(); break;
             case 3: consultarPagos(); break;
+            case 4: modificarPago(); break;
+			case 5: eliminarPago(); break;
             case 6: subMenuReportes(); break;
             case 7: setColor(14); cout << "Saliendo...\n"; setColor(7); break;
             default: cout << "Opcion invalida.\n";
